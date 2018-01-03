@@ -1,0 +1,90 @@
+<style lang="less">
+@import 'assets/styles/weui.less';
+@import 'assets/styles/wxParse.less';
+@import 'assets/styles/animate.less';
+@import 'assets/styles/font-awesome.min.less';
+@import 'assets/styles/common.less';
+</style>
+
+<script>
+import wepy from "wepy";
+import "wepy-async-function";
+
+export default class extends wepy.app {
+  config = {
+    pages: ["pages/discovery", "pages/movies", "pages/index"],
+    window: {
+      backgroundTextStyle: "dark",
+      navigationBarBackgroundColor: "#496069",
+      navigationBarTitleText: "HONYE",
+      navigationBarTextStyle: "white",
+      backgroundColor: "#f7f7f7"
+    },
+    tabBar: {
+      color: "#496069",
+      selectedColor: "#000",
+      backgroundColor: "#fff",
+      borderStyle: "black",
+      list: [
+        {
+          pagePath: "pages/discovery",
+          text: "发现",
+          iconPath: "assets/images/tab_discover_unchecked.png",
+          selectedIconPath: "assets/images/tab_discover_checked.png"
+        },
+        {
+          pagePath: "pages/movies",
+          text: "我的电影",
+          iconPath: "assets/images/tab_movies_unchecked.png",
+          selectedIconPath: "assets/images/tab_movies_checked.png"
+        },
+        {
+          pagePath: "pages/index",
+          text: "账号",
+          iconPath: "assets/images/tab_usercenter_unchecked.png",
+          selectedIconPath: "assets/images/tab_usercenter_checked.png"
+        }
+      ]
+    }
+  };
+
+  globalData = {
+    userInfo: null
+  };
+
+  constructor() {
+    super();
+    this.use("requestfix");
+  }
+
+  onLaunch() {
+    this.testAsync();
+  }
+
+  sleep(s) {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        resolve("promise resolved");
+      }, s * 1000);
+    });
+  }
+
+  async testAsync() {
+    const data = await this.sleep(3);
+    console.log(data);
+  }
+
+  getUserInfo(cb) {
+    const that = this;
+    if (this.globalData.userInfo) {
+      return this.globalData.userInfo;
+    }
+    wepy.getUserInfo({
+      success(res) {
+        that.globalData.userInfo = res.userInfo;
+        cb && cb(res.userInfo);
+      }
+    });
+  }
+}
+</script>

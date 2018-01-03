@@ -1,0 +1,160 @@
+<style lang="less">
+@import "../tempaltes/circle/circle.less";
+page {
+  height: 100%;
+}
+.page-discovery .search-bar {
+  padding: 10rpx 20rpx;
+  background-color: #496069;
+}
+.search-bar .search-radius {
+  background-color: #fff;
+  border-radius: 1em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0.8em;
+  color: #888;
+  padding: 0.3em 0;
+}
+.search-bar .search-radius text {
+  margin-left: 0.5em;
+}
+.page-discovery .content {
+  display: flex;
+  flex: 1;
+}
+.banner {
+  height: 450rpx;
+  background-color: #eee;
+}
+.slide-image {
+  display: block;
+  width: 100%;
+}
+.kind-container {
+  display: flex;
+  flex-direction: row;
+  border-bottom: 0.5px solid #ddd;
+}
+.item-container {
+  flex: 1;
+}
+.article-item-container {
+  margin-top: 15rpx;
+  border-bottom: 0.5px solid #ddd;
+}
+</style>
+<template>
+  <view class="container page-discovery">
+    <navigator url='/pages/search/search' hover-class='none'>
+      <view class='search-bar'>
+        <view class='search-radius btn-opacity'>
+          <icon type='search' size='14'></icon>
+          <text>搜索</text>
+        </view>
+      </view>
+    </navigator>
+    <view class='content'>
+    <scroll-view scroll-y enable-back-to-top>
+      <swiper class='banner'
+        indicator-dots
+        autoplay
+        indicator-active-color='#fff'
+        circular>
+        <repeat for='{{banner}}' key='id'>
+          <swiper-item>
+            <image src='{{item.image}}' class='slide-image'  @tap='onBannerTap({{index}})'/>
+          </swiper-item>
+        </repeat>
+      </swiper>
+      <view class='kind-container'>
+        <navigator class='item-container' hover-class='hover-bg'
+          url='/pages/classification/index'
+        >
+          <circle1 imgUrl='/assets/images/discover_classify_group_icon.png' title='分类查找' />
+        </navigator>
+        <navigator class='item-container' hover-class='hover-bg'
+          url='/pages/card/card'
+        >
+          <circle2 :date="day" title='每日电影卡片' />
+        </navigator>
+        <navigator class='item-container' hover-class='hover-bg'
+          url='/pages/intheaters/in_theaters'
+        >
+          <circle3 imgUrl='/assets/images/discover_classify_cinema_icon.png' title='影院热映' />
+        </navigator>
+      </view>
+      <repeat for='{{articles}}' key='id'>
+        <navigator class='article-item-container' url='/pages/article/detail/detail?id={{item.id}}'>
+          <article image='item.image' title='item.title' likeCount='item.likeCount' />
+        </navigator>
+      </repeat>
+    </scroll-view>
+  </view>
+  </view>
+</template>
+<script>
+import wepy from 'wepy'
+import testMixin from '../mixins/test'
+import circle from '../components/circle'
+import article from '../components/article'
+import { Honye } from '../utils/apis'
+export default class Discovery extends wepy.page {
+  config = {}
+  components = {
+    article,
+    circle1: circle,
+    circle2: circle,
+    circle3: circle
+  }
+  mixins = [testMixin]
+  data = {
+    banner: [],
+    articles: [],
+    day: new Date().getDate()
+  }
+  computed = {
+    getDate() {
+      return new Date().getDate()
+    }
+  }
+  methods = {
+    onBannerTap(index) {
+      const urls = []
+      for (let item of this.banner) {
+        urls.push(item.image)
+      }
+      wepy.previewImage({
+        current: urls[index],
+        urls
+      })
+    }
+  }
+  events = {}
+  onLoad() {
+    this.getBanners()
+    this.getArticles()
+  }
+  /**
+   * 获取轮播数据
+   */
+  getBanners() {
+    let that = this
+    Honye.get(Honye.BANNERS).then(res => {
+      that.banner = res
+      that.$apply()
+    })
+  }
+  /**
+   * 文章数据
+   */
+  getArticles() {
+    let that = this
+    Honye.get(Honye.ARTICLES).then(res => {
+      that.articles = res
+      that.$apply()
+    })
+  }
+}
+</script>

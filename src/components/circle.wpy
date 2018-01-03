@@ -1,0 +1,69 @@
+<style lang="less">
+.icon-img {
+  width: 50%;
+  height: 35%;
+  border-width: 2px;
+  border-color: #f00;
+}
+.title {
+  font-size: 0.8rem;
+}
+.circle-border {
+  width: 120rpx;
+  height: 120rpx;
+  border: 2rpx solid #496069;
+  border-radius: 50%;
+  margin: 20rpx;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.circle-container {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-bottom: 20rpx;
+  background-color: #fff;
+}
+.circle-date {
+  font-weight: bold;
+  font-size: 1.6rem;
+  color: #496069;
+}
+</style>
+
+<template name="circle">
+  <view class="circle-container btn-bg">
+    <view class="circle-border">
+      <image 
+        wx:if="{{imgUrl}}" 
+        class="icon-img" 
+        src="{{imgUrl}}"
+        mode="aspectFit" />
+      <text class="circle-date">{{date}}</text>
+    </view>
+    <text class="title">{{title}}</text>
+  </view>
+</template>
+
+<script>
+import wepy from 'wepy';
+export default class Circle extends wepy.component {
+  props = {
+    imgUrl: {
+      type: String,
+      default: ''
+    },
+    date: {
+      type: [Number,String],
+      default: ''
+    },
+    title: {
+      type: String,
+      default: ''
+    }
+  }
+}
+</script>
